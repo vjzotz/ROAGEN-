@@ -1,4 +1,4 @@
-# ROAGEN 🎛️
+# ROAGEN
 
 **by vjzotz**
 
