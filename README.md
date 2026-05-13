@@ -1,4 +1,7 @@
-# ROAGEN
+# ROAGEN 🎛️
+
+[![Descargar ROAGEN v1.0](https://img.shields.io/badge/Descargar-v1.0_EXE-brightgreen?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/vjzotz/ROAGEN-/releases/download/v1.0/ROAGEN.exe)
+[![Download ROAGEN v1.0](https://img.shields.io/badge/Download-v1.0_EXE-blue?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/vjzotz/ROAGEN-/releases/download/v1.0/ROAGEN.exe)
 
 **by vjzotz**
 
