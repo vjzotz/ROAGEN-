@@ -31,6 +31,8 @@ def svg_to_png(svg_path, png_path):
             )
 
 
+LOGO_B64 = "iVBORw0KGgoAAAANSUhEUgAAACEAAAAhCAYAAABX5MJvAAAACXBIWXMAAAsSAAALEgHS3X78AAAFX0lEQVRYhe2XfWxV9RnHP885596297aShRa9xSogE7glvF2gYGmRzFG2OZdJxFhfQqIQjBsOFl+QzUyz8cdeeDFbiKvCYoj4AoFAohKFCi0aay20hQyQlBpssQgoS3uL7T3n6x+3UxCopZM5k32T54/z+maze7+95zi/HJPFty/m2AeD/EF/quwHxWbLD+2Dxgw+den5d6b+amjIvB4T1Nh2nj7Vmrbn1Zy+Wvlf7Uz9925ns/FhD5oTEnswJiZqcG6a9mxGP/zMcy09dFojuzk5vxdSJW+3ggVkFfsArPqwPYJTBOINJBqUOCD68cu1zc4M9dWOj00p2R4qm1IVj+d3fCMQ/ym9ffnLThkVVvsj1xQiDh324wcAHGgTbPdQQjTbWJ5Mjf2wKXykIw+mMkSN3Z980c0d26fQ3o9NK6kO5eb06dUGIv5XPWdK+aeMfdqdk1b7IFrzkweM+LHXhER/ucKETaDajVCJu0AycEcQNNgcwxeAqoyM0+Oq66I0zajLihXsik4tqopOLDjtZWbooxPMPLPht29qKJ6tTYnu3ON1zfosHBcBvAhhuMMOFNYFRjvAd2CFjjsRbSidfEMA8BwYBtWYUGmQFYhQQjUQOjD/dMerfOc+ZjnULf/FA65qKJ95JiV2pLwEcoBH4uyAC/MCB5wIjYumqNwTGdl/UCVzgY4ObPcN3jMEG+UCtL37vQxN0Ffxlxa/PzvsFxLanVs7+qGL1qhpfVpkSJ3oMcoE7Q8YLAdQGsMSBk4JcIBkIA/b6oiWA8QZJQQvGR4JKH3KVvp4wuN+FGfPm/y73vvmvXLAnVo8Yuq2m+YOZ27rFsR6AKFAeNt5IiaGOMc6BVEpc1+NArKdJD/Y48L5gmMEzgiOC44IXXKgQPOEA11yzI954YKaTleVfEOLTY605ZUVFlTVHP0wADHNgkmtdu1IKl4WMkwEMlKgP4IQgz+BjwQCDIcAnpI+XexAGDgm6DEoMVgZo/nXDXp/6ZtXtoVj+p3xVkr6I2traIZFI5OQ4B/1qTOFLox1OPZZhmuiixRmmp0PoWQ8tdtFeD+0LoWoPrXHRow66zUFjDA0AjTY0x0HLciJNNU+tnHl2nq/GedNRtfHlCV1HmuKN214rrdu5c95RwRgXtnSLAsGfXbhfMBg4JYgqvSzXAldbejnygINw6pmxifXLS4r3FK5Y9ex51V/MibPjT3Pvufe+sH02N2zKBuWABht6z0NLQ6bdHvq+ITg3YqDGEJptpF508Y+vWn5Lby5IuvgGNnrg9/L2+Qqv7xKeQY5BpsF+wA1Eg6DIzn/uETf9oRpquFPuuvPJvIWLtvTqQm9OHG9rCxcnEq8ONFRgaISDxrumhz203UMPuajCPdeFBQ5a66LZhg5Nm7LBTybt61yQdHEISRxtbs4qHnLtu4WOaaJrKnFNZS5qCKGFXro5oz0ANxva6aEfGqq/IvJ+V2vLFX0B+FoISRzevy9v1lWDDpW4pqmuabxretlDi1y0y0Nllp6ISg/daOiNaEZbe3XV8L4C9AlCEtVbt4yZ7FrnWNc00jEtctFqFy1z0WYPveah6YY2ewQnKp7+yaUA9BlCEiuXPlY+wrFgiIMmOajKQz8yVB9Cv3TQX1105Laf//FSAS4JQhIL775r2SBDAyxdfbGhJQ560EGHpxev85NJ57JDdCaTTkkisTUD9LiDFjvpRtxfEHvH72j3+gNwyRCSaG1picbj8cqbDNV5aG9OZlv7228N6y9AvyAk0dzcnDM8FjtY53Hmk00bi/4TAOkCe0dfVV1dfX2ko92ZUDbrQL9ecJb6DfFN6rvxB/bf0P8ExOcvOem8wvBi4wAAAABJRU5ErkJggg=="
+
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
@@ -42,14 +44,14 @@ def resource_path(relative_path):
 class ROAGEN(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("ROAGEN v1.5")
+        self.title("ROAGEN v1.1")
         self.geometry("480x680")
         self.resizable(False, False)
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
 
         # Ícono: aplicar después de que CTk termine de inicializar la ventana
-        self.after(0, self._set_icon)
+        self.after(500, self._set_icon)
 
         self.colors = {
             "bg_dark": "#000000",
@@ -62,61 +64,73 @@ class ROAGEN(ctk.CTk):
         }
 
         self.header_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.header_frame.pack(pady=(20, 10))
+        self.header_frame.pack(pady=(10, 5))
         ctk.CTkLabel(self.header_frame, text="ROAGEN", font=("Arial", 36, "bold")).pack()
         ctk.CTkLabel(self.header_frame, text="by vjzotz", font=("Arial", 13, "italic"), text_color="#888").pack()
 
         self.create_section_label("PARÁMETROS DE RESOLUCIÓN")
         self.dim_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.dim_frame.pack(pady=5)
+        self.dim_frame.pack(pady=2)
 
         ctk.CTkLabel(self.dim_frame, text="Composición (Input)", font=("Arial", 11, "bold")).grid(row=0, column=0, columnspan=2, pady=2)
         self.comp_w = ctk.CTkEntry(self.dim_frame, width=120, justify="center")
-        self.comp_w.grid(row=1, column=0, padx=5); self.comp_w.insert(0, "1920")
+        self.comp_w.grid(row=1, column=0, padx=5, pady=1); self.comp_w.insert(0, "1920")
         self.comp_h = ctk.CTkEntry(self.dim_frame, width=120, justify="center")
-        self.comp_h.grid(row=1, column=1, padx=5); self.comp_h.insert(0, "1080")
+        self.comp_h.grid(row=1, column=1, padx=5, pady=1); self.comp_h.insert(0, "1080")
 
         ctk.CTkLabel(self.dim_frame, text="Salida (Output)", font=("Arial", 11, "bold")).grid(row=2, column=0, columnspan=2, pady=(10, 2))
         self.out_w = ctk.CTkEntry(self.dim_frame, width=120, justify="center")
-        self.out_w.grid(row=3, column=0, padx=5); self.out_w.insert(0, "1920")
+        self.out_w.grid(row=3, column=0, padx=5, pady=1); self.out_w.insert(0, "1920")
         self.out_h = ctk.CTkEntry(self.dim_frame, width=120, justify="center")
-        self.out_h.grid(row=3, column=1, padx=5); self.out_h.insert(0, "1080")
+        self.out_h.grid(row=3, column=1, padx=5, pady=1); self.out_h.insert(0, "1080")
 
         self.create_section_label("FIRMA TÉCNICA (GRILLA)")
         self.f_tag = ctk.CTkEntry(self, width=280, justify="center")
-        self.f_tag.pack(pady=5); self.f_tag.insert(0, "@vjzotz")
+        self.f_tag.pack(pady=3); self.f_tag.insert(0, "@vjzotz")
+
+        self.create_section_label("DENSIDAD px/m")
+        self.density = ctk.CTkEntry(self, width=280, justify="center")
+        self.density.pack(pady=3); self.density.insert(0, "256")
 
         self.create_section_label("ARCHIVOS SVG")
         self.file_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.file_frame.pack(pady=5)
+        self.file_frame.pack(pady=2)
 
         self.btn_input = ctk.CTkButton(self.file_frame, text="CARGAR SVG INPUT", command=self.load_input, width=280, height=40, fg_color="#34495e")
-        self.btn_input.pack(pady=(10, 2))
+        self.btn_input.pack(pady=(5, 2))
         self.lbl_input = ctk.CTkLabel(self.file_frame, text="No se cargó archivo", font=("Arial", 10), text_color="#7f8c8d")
         self.lbl_input.pack()
 
         self.btn_output = ctk.CTkButton(self.file_frame, text="CARGAR SVG OUTPUT (OPCIONAL)", command=self.load_output, width=280, height=40, fg_color="transparent", border_width=1)
-        self.btn_output.pack(pady=(10, 2))
+        self.btn_output.pack(pady=(5, 2))
         self.lbl_output = ctk.CTkLabel(self.file_frame, text="Modo: Match Input Shape", font=("Arial", 10), text_color="#7f8c8d")
         self.lbl_output.pack()
 
         self.action_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.action_frame.pack(pady=(25, 20))
+        self.action_frame.pack(pady=(8, 8))
         ctk.CTkButton(self.action_frame, text="GENERAR GRILLA", fg_color="#3498db", width=160, height=45, command=self.generate_grid).grid(row=0, column=0, padx=10)
         ctk.CTkButton(self.action_frame, text="GENERAR XML", fg_color="#27ae60", width=160, height=45, font=("Arial", 12, "bold"), command=self.generate_xml).grid(row=0, column=1, padx=10)
 
         self.input_path = self.output_path = None
 
     def _set_icon(self):
-        """Aplica el ícono a la ventana y taskbar de Windows correctamente con CTk."""
-        ico = resource_path("logo.ico")
+        """Aplica el ícono embebido en base64 via archivo temporal .ico"""
         try:
-            # wm_iconbitmap funciona mejor que iconbitmap con CustomTkinter
-            self.wm_iconbitmap(ico)
-            # En Windows, también forzar el ícono de la taskbar vía ctypes
             if platform.system() == "Windows":
                 import ctypes
-                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("vjzotz.roagen.1.5")
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("vjzotz.roagen.1.1")
+
+            import base64, io, tempfile
+            from PIL import Image
+            img_data = base64.b64decode(LOGO_B64)
+            img = Image.open(io.BytesIO(img_data))
+
+            # Guardar como .ico temporal y aplicar con wm_iconbitmap
+            tmp = tempfile.NamedTemporaryFile(suffix='.ico', delete=False)
+            img.save(tmp.name, format='ICO', sizes=[(32,32),(16,16)])
+            tmp.close()
+            self.wm_iconbitmap(tmp.name)
+            self._tmp_icon = tmp.name  # guardar referencia
         except Exception:
             pass
 
@@ -158,29 +172,132 @@ class ROAGEN(ctk.CTk):
         return [(xs[0], ys[0]), (xs[1], ys[0]), (xs[1], ys[1]), (xs[0], ys[1])]
 
     def parse_path_d(self, d):
-        if re.findall(r"[mlhvcsqta]", d):
-            return None
-        pts = []
-        tokens = re.findall(r"[MLHVCSQTAZ]|[-+]?\d*\.?\d+", d)
-        i = 0; cmd = 'M'
+        """
+        Parsea 'd' de <path> SVG soportando M,L,H,V,C,S,Z absolutos y relativos.
+        Curvas Bezier se aproximan con 32 puntos.
+        Retorna lista de (x,y) o None si el path está vacío.
+        """
+        CURVE_SAMPLES = 32
+
+        def bezier_cubic(p0, p1, p2, p3, n):
+            pts = []
+            for i in range(n + 1):
+                t = i / n; mt = 1 - t
+                x = mt**3*p0[0] + 3*mt**2*t*p1[0] + 3*mt*t**2*p2[0] + t**3*p3[0]
+                y = mt**3*p0[1] + 3*mt**2*t*p1[1] + 3*mt*t**2*p2[1] + t**3*p3[1]
+                pts.append((x, y))
+            return pts
+
+        tokens = re.findall(r"[MmLlHhVvCcSsZz]|[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?", d)
+        pts = []; i = 0; cmd = 'M'
+        cx, cy = 0.0, 0.0
+        start_x, start_y = 0.0, 0.0
+        last_cp = None
+
         while i < len(tokens):
             t = tokens[i]
-            if re.match(r"[A-Z]", t):
+            if re.match(r"[MmLlHhVvCcSsZz]", t):
                 cmd = t; i += 1; continue
-            if cmd in ('M', 'L'):
-                try:
-                    pts.append((float(tokens[i]), float(tokens[i+1]))); i += 2
-                except:
-                    i += 1
-            else:
-                i += 1
+            try:
+                if cmd == 'M':
+                    x,y=float(tokens[i]),float(tokens[i+1])
+                    pts.append((x,y)); cx,cy=x,y; start_x,start_y=x,y; last_cp=None; i+=2; cmd='L'
+                elif cmd == 'm':
+                    x,y=cx+float(tokens[i]),cy+float(tokens[i+1])
+                    pts.append((x,y)); cx,cy=x,y; start_x,start_y=x,y; last_cp=None; i+=2; cmd='l'
+                elif cmd == 'L':
+                    x,y=float(tokens[i]),float(tokens[i+1])
+                    pts.append((x,y)); cx,cy=x,y; last_cp=None; i+=2
+                elif cmd == 'l':
+                    x,y=cx+float(tokens[i]),cy+float(tokens[i+1])
+                    pts.append((x,y)); cx,cy=x,y; last_cp=None; i+=2
+                elif cmd == 'H':
+                    x=float(tokens[i]); pts.append((x,cy)); cx=x; last_cp=None; i+=1
+                elif cmd == 'h':
+                    x=cx+float(tokens[i]); pts.append((x,cy)); cx=x; last_cp=None; i+=1
+                elif cmd == 'V':
+                    y=float(tokens[i]); pts.append((cx,y)); cy=y; last_cp=None; i+=1
+                elif cmd == 'v':
+                    y=cy+float(tokens[i]); pts.append((cx,y)); cy=y; last_cp=None; i+=1
+                elif cmd == 'C':
+                    x1,y1=float(tokens[i]),float(tokens[i+1])
+                    x2,y2=float(tokens[i+2]),float(tokens[i+3])
+                    x,y=float(tokens[i+4]),float(tokens[i+5])
+                    pts.extend(bezier_cubic((cx,cy),(x1,y1),(x2,y2),(x,y),CURVE_SAMPLES)[1:])
+                    last_cp=(x2,y2); cx,cy=x,y; i+=6
+                elif cmd == 'c':
+                    x1,y1=cx+float(tokens[i]),cy+float(tokens[i+1])
+                    x2,y2=cx+float(tokens[i+2]),cy+float(tokens[i+3])
+                    x,y=cx+float(tokens[i+4]),cy+float(tokens[i+5])
+                    pts.extend(bezier_cubic((cx,cy),(x1,y1),(x2,y2),(x,y),CURVE_SAMPLES)[1:])
+                    last_cp=(x2,y2); cx,cy=x,y; i+=6
+                elif cmd == 'S':
+                    rx=2*cx-last_cp[0] if last_cp else cx
+                    ry=2*cy-last_cp[1] if last_cp else cy
+                    x2,y2=float(tokens[i]),float(tokens[i+1])
+                    x,y=float(tokens[i+2]),float(tokens[i+3])
+                    pts.extend(bezier_cubic((cx,cy),(rx,ry),(x2,y2),(x,y),CURVE_SAMPLES)[1:])
+                    last_cp=(x2,y2); cx,cy=x,y; i+=4
+                elif cmd == 's':
+                    rx=2*cx-last_cp[0] if last_cp else cx
+                    ry=2*cy-last_cp[1] if last_cp else cy
+                    x2,y2=cx+float(tokens[i]),cy+float(tokens[i+1])
+                    x,y=cx+float(tokens[i+2]),cy+float(tokens[i+3])
+                    pts.extend(bezier_cubic((cx,cy),(rx,ry),(x2,y2),(x,y),CURVE_SAMPLES)[1:])
+                    last_cp=(x2,y2); cx,cy=x,y; i+=4
+                elif cmd in ('Z','z'):
+                    i+=1; continue
+                else:
+                    i+=1
+            except (IndexError, ValueError):
+                i+=1
+
         if len(pts) > 1 and pts[0] == pts[-1]:
             pts = pts[:-1]
-        return pts
+        return pts if len(pts) >= 3 else None
+
+    def ellipse_to_polygon(self, cx, cy, rx, ry, n=32):
+        """Aproxima una elipse como polígono de n puntos."""
+        import math
+        return [(cx + rx * math.cos(2*math.pi*i/n),
+                 cy + ry * math.sin(2*math.pi*i/n)) for i in range(n)]
 
     # ═══════════════════════════════════════════════════════════════
     # PARSEO SVG
     # ═══════════════════════════════════════════════════════════════
+
+    def resample_polygon(self, pts, max_pts=64):
+        """Reduce un polígono a max_pts puntos manteniendo la forma lo más fiel posible."""
+        if len(pts) <= max_pts:
+            return pts
+        import math
+        # Calcular longitud total del perímetro
+        def dist(a, b): return math.sqrt((b[0]-a[0])**2 + (b[1]-a[1])**2)
+        n = len(pts)
+        perimeter = sum(dist(pts[i], pts[(i+1)%n]) for i in range(n))
+        step = perimeter / max_pts
+        result = [pts[0]]
+        accum = 0.0
+        i = 0
+        while len(result) < max_pts:
+            j = (i+1) % n
+            seg = dist(pts[i], pts[j])
+            if accum + seg >= step:
+                t = (step - accum) / seg
+                x = pts[i][0] + t*(pts[j][0]-pts[i][0])
+                y = pts[i][1] + t*(pts[j][1]-pts[i][1])
+                result.append((x, y))
+                accum = 0.0
+                pts = list(pts)
+                pts.insert(j, (x, y))
+                n = len(pts)
+                i = j
+            else:
+                accum += seg
+                i = j
+                if i == 0:
+                    break
+        return result
 
     def get_shapes(self, svg_path):
         if not svg_path:
@@ -199,9 +316,9 @@ class ROAGEN(ctk.CTk):
                         stroke_paths.add(id(p))
 
             res = []; idx = 0
-            for e in soup.find_all(['rect', 'polygon', 'path']):
+            for e in soup.find_all(['rect', 'polygon', 'path', 'ellipse']):
                 idx += 1
-                name = e.get('id') or f"{e.name.capitalize()} {idx}"
+                name = e.get('id') or f"Slice_{idx}"
 
                 if e.name == 'rect':
                     x, y = float(e.get('x', 0)), float(e.get('y', 0))
@@ -228,10 +345,19 @@ class ROAGEN(ctk.CTk):
                     pts = self.parse_path_d(e.get('d', ''))
                     if not pts or len(pts) < 3:
                         continue
+                    pts = self.resample_polygon(pts, max_pts=64)
                     if self.is_rect_shape(pts):
                         res.append({'pts': self.normalize_rect_pts(pts), 'name': name, 'type': 'rect'})
                     else:
                         res.append({'pts': pts, 'name': name, 'type': 'polygon'})
+
+                elif e.name == 'ellipse':
+                    cx = float(e.get('cx', 0)); cy = float(e.get('cy', 0))
+                    rx = float(e.get('rx', 0)); ry = float(e.get('ry', 0))
+                    if rx == 0 or ry == 0:
+                        continue
+                    pts = self.ellipse_to_polygon(cx, cy, rx, ry)
+                    res.append({'pts': pts, 'name': name, 'type': 'polygon'})
 
             return res
         except Exception as ex:
@@ -361,7 +487,15 @@ class ROAGEN(ctk.CTk):
             dwg = svgwrite.Drawing(save_path, size=(cw, ch), profile='full')
             c = self.colors
             dwg.add(dwg.rect(insert=(0,0), size=(cw,ch), fill=c["bg_dark"]))
-            grid_unit = 64; margin = grid_unit
+            try:
+                px_per_m = int(self.density.get().strip())
+            except:
+                px_per_m = 256
+            # grid_unit = 1 modulo de la densidad (1/4 de px/m, limitado entre 32 y 128)
+            grid_unit = px_per_m // 4
+            while grid_unit > 128: grid_unit //= 2
+            while grid_unit < 32:  grid_unit *= 2
+            margin = grid_unit
 
             for s in shapes:
                 pts = s['pts']
@@ -389,7 +523,7 @@ class ROAGEN(ctk.CTk):
                 group.add(dwg.line(start=(min_x,cy), end=(max_x,cy), stroke=c['guide'], stroke_width=2))
                 group.add(dwg.line(start=(cx,min_y), end=(cx,max_y), stroke=c['guide'], stroke_width=2))
                 dwg.add(group)
-                dwg.add(dwg.polygon(points=pts, stroke=c['accent'], fill="none", stroke_width=4))
+                dwg.add(dwg.polygon(points=pts, id=s['name'].replace(' ', '_'), stroke=c['accent'], fill="none", stroke_width=4))
                 dwg.add(dwg.text(s['name'].upper(), insert=(cx,cy), font_size="24px", fill="#fff",
                                  text_anchor="middle", font_family="Arial", font_weight="bold"))
 
