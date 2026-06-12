@@ -266,6 +266,68 @@ class ROAGEN(ctk.CTk):
     # PARSEO SVG
     # ═══════════════════════════════════════════════════════════════
 
+    def apply_transform(self, pts, transform_str):
+        """
+        Aplica un atributo transform SVG a una lista de puntos.
+        Soporta: translate, rotate, scale, matrix y combinaciones.
+        """
+        import math
+
+        def mat_mul(m, p):
+            """Multiplica matriz 2x3 por punto (x,y)."""
+            x = m[0]*p[0] + m[2]*p[1] + m[4]
+            y = m[1]*p[0] + m[3]*p[1] + m[5]
+            return (x, y)
+
+        def mat_compose(a, b):
+            """Compone dos matrices 2x3: resultado = a * b."""
+            return [
+                a[0]*b[0] + a[2]*b[1],
+                a[1]*b[0] + a[3]*b[1],
+                a[0]*b[2] + a[2]*b[3],
+                a[1]*b[2] + a[3]*b[3],
+                a[0]*b[4] + a[2]*b[5] + a[4],
+                a[1]*b[4] + a[3]*b[5] + a[5],
+            ]
+
+        # Matriz identidad
+        matrix = [1, 0, 0, 1, 0, 0]
+
+        # Parsear cada transformación en orden
+        for m in re.finditer(r'(matrix|translate|rotate|scale|skewX|skewY)\s*\(([^)]+)\)', transform_str):
+            op = m.group(1)
+            args = [float(x) for x in re.findall(r"[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?", m.group(2))]
+
+            if op == 'matrix' and len(args) >= 6:
+                t = args[:6]
+            elif op == 'translate':
+                tx = args[0] if len(args) > 0 else 0
+                ty = args[1] if len(args) > 1 else 0
+                t = [1, 0, 0, 1, tx, ty]
+            elif op == 'rotate':
+                angle = math.radians(args[0])
+                cx = args[1] if len(args) > 1 else 0
+                cy = args[2] if len(args) > 2 else 0
+                cos_a, sin_a = math.cos(angle), math.sin(angle)
+                # rotate(a, cx, cy) = translate(cx,cy) * rotate(a) * translate(-cx,-cy)
+                t = [cos_a, sin_a, -sin_a, cos_a,
+                     cx - cos_a*cx + sin_a*cy,
+                     cy - sin_a*cx - cos_a*cy]
+            elif op == 'scale':
+                sx = args[0] if len(args) > 0 else 1
+                sy = args[1] if len(args) > 1 else sx
+                t = [sx, 0, 0, sy, 0, 0]
+            elif op == 'skewX':
+                t = [1, 0, math.tan(math.radians(args[0])), 1, 0, 0]
+            elif op == 'skewY':
+                t = [1, math.tan(math.radians(args[0])), 0, 1, 0, 0]
+            else:
+                continue
+
+            matrix = mat_compose(matrix, t)
+
+        return [mat_mul(matrix, p) for p in pts]
+
     def resample_polygon(self, pts, max_pts=64):
         """Reduce un polígono a max_pts puntos manteniendo la forma lo más fiel posible."""
         if len(pts) <= max_pts:
@@ -320,11 +382,20 @@ class ROAGEN(ctk.CTk):
                 idx += 1
                 name = e.get('id') or f"Slice_{idx}"
 
+                transform_str = e.get('transform', '')
+
                 if e.name == 'rect':
                     x, y = float(e.get('x', 0)), float(e.get('y', 0))
                     w, h  = float(e.get('width', 0)), float(e.get('height', 0))
                     if w > 0 and h > 0:
-                        res.append({'pts': [(x,y),(x+w,y),(x+w,y+h),(x,y+h)], 'name': name, 'type': 'rect'})
+                        pts = [(x,y),(x+w,y),(x+w,y+h),(x,y+h)]
+                        if transform_str:
+                            pts = self.apply_transform(pts, transform_str)
+                        # Un rect transformado puede ya no ser axis-aligned
+                        if self.is_rect_shape(pts):
+                            res.append({'pts': self.normalize_rect_pts(pts), 'name': name, 'type': 'rect'})
+                        else:
+                            res.append({'pts': pts, 'name': name, 'type': 'polygon'})
 
                 elif e.name == 'polygon':
                     raw = e.get('points', '').replace(',', ' ')
@@ -334,6 +405,8 @@ class ROAGEN(ctk.CTk):
                     pts = [(float(c[i]), float(c[i+1])) for i in range(0, len(c)-1, 2)]
                     if len(pts) > 1 and pts[0] == pts[-1]:
                         pts = pts[:-1]
+                    if transform_str:
+                        pts = self.apply_transform(pts, transform_str)
                     if self.is_rect_shape(pts):
                         res.append({'pts': self.normalize_rect_pts(pts), 'name': name, 'type': 'rect'})
                     else:
@@ -345,6 +418,8 @@ class ROAGEN(ctk.CTk):
                     pts = self.parse_path_d(e.get('d', ''))
                     if not pts or len(pts) < 3:
                         continue
+                    if transform_str:
+                        pts = self.apply_transform(pts, transform_str)
                     pts = self.resample_polygon(pts, max_pts=64)
                     if self.is_rect_shape(pts):
                         res.append({'pts': self.normalize_rect_pts(pts), 'name': name, 'type': 'rect'})
@@ -357,6 +432,8 @@ class ROAGEN(ctk.CTk):
                     if rx == 0 or ry == 0:
                         continue
                     pts = self.ellipse_to_polygon(cx, cy, rx, ry)
+                    if transform_str:
+                        pts = self.apply_transform(pts, transform_str)
                     res.append({'pts': pts, 'name': name, 'type': 'polygon'})
 
             return res
@@ -502,7 +579,16 @@ class ROAGEN(ctk.CTk):
                 xs = [p[0] for p in pts]; ys = [p[1] for p in pts]
                 min_x, max_x = int(min(xs)), int(max(xs))
                 min_y, max_y = int(min(ys)), int(max(ys))
-                cx, cy = min_x + (max_x-min_x)/2, min_y + (max_y-min_y)/2
+                # Centroide real de la forma (no el centro de la bounding box)
+                n_pts = len(pts)
+                cx = sum(p[0] for p in pts) / n_pts
+                cy = sum(p[1] for p in pts) / n_pts
+                # Radio basado en el área real, no en la bounding box
+                import math
+                # Área por fórmula de Shoelace
+                area = abs(sum(pts[i][0]*(pts[(i+1)%n_pts][1]-pts[(i-1)%n_pts][1]) 
+                               for i in range(n_pts))) / 2
+                radius = math.sqrt(area / math.pi)
                 m_id = f"m_{uuid.uuid4().hex[:6]}"
                 mask = dwg.defs.add(dwg.clipPath(id=m_id))
                 mask.add(dwg.polygon(points=pts))
@@ -514,7 +600,6 @@ class ROAGEN(ctk.CTk):
                         is_p = (x//grid_unit + y//grid_unit) % 2 == 0
                         fill_c = (c['m1'] if is_p else c['m2']) if is_m else (c['bg_dark'] if is_p else c['bg_sub'])
                         group.add(dwg.rect(insert=(x,y), size=(grid_unit,grid_unit), fill=fill_c))
-                radius = (max_y-min_y)/2
                 group.add(dwg.circle(center=(cx,cy), r=radius, stroke=c['primary'], fill="none", stroke_width=1))
                 for y in range(min_y, max_y+grid_unit, grid_unit):
                     group.add(dwg.line(start=(min_x,y), end=(max_x,y), stroke=c['primary'], opacity=0.3))
